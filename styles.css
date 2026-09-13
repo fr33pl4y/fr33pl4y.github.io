@@ -877,3 +877,12 @@ body {
     max-width: 55vw;
   }
 }
+
+.thumbnail{
+  width: 100px;
+  height: auto;
+}
+.thumbnail:hover {
+    border-radius: 10px;
+    transform: scale(5.0);
+}
