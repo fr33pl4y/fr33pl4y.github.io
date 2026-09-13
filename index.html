@@ -36,7 +36,7 @@
     <div class="credits">
       <div class="credits__rotator">
         <span class="credit credit--insert" data-hold="3400">INSERT COIN</span>
-        <span class="credit credit--version" id="credit-version" data-hold="3400">Updated to MAME &mdash;</span>
+        <span class="credit credit--version" id="credit-version" data-hold="3400">From the creators of ARCADE TIMELINES, we proudly present FR33 PL4Y !!!</span>
         <a class="credit credit-logo" data-hold="2600" href="https://www.mamedev.org" target="_blank" rel="noopener">
           <img src="images/mame_logo.png" alt="MAME" />
         </a>
@@ -66,22 +66,7 @@
         <span class="timeline-placeholder__title">NO TIMELINE</span>
         <span class="timeline-placeholder__text">This link does not end in <code>.timeline</code>.</span>
       </div>
-      <button class="maximize-btn" id="maximize-btn" title="Open timeline in fullscreen" aria-label="Open timeline in fullscreen">
-        <!-- Lucide "maximize" icon (inlined; uses currentColor). Shown when not fullscreen. -->
-        <svg id="icon-maximize" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M8 3H5a2 2 0 0 0-2 2v3" />
-          <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
-          <path d="M3 16v3a2 2 0 0 0 2 2h3" />
-          <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
-        </svg>
-        <!-- Lucide "minimize" icon (inlined; uses currentColor). Shown while fullscreen. -->
-        <svg id="icon-minimize" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden>
-          <path d="M8 3v3a2 2 0 0 1-2 2H3" />
-          <path d="M21 8h-3a2 2 0 0 1-2-2V3" />
-          <path d="M3 16h3a2 2 0 0 1 2 2v3" />
-          <path d="M16 21v-3a2 2 0 0 1 2-2h3" />
-        </svg>
-      </button>
+   
     </main>
 
 
@@ -89,22 +74,40 @@
          time (same animation as the Hall of Fame). -->
     <div class="help-overlay" id="help-overlay" hidden>
       <div class="help-panel">
+	  
         <div class="help-intro">
-          <p>Welcome to Arcade Timelines, the exciting journey to your favorite arcade decade.</p>
-          <p>Relive your childhood, find those long-forgotten games and enter the golden age of arcade games again!</p>
-          <p>With one mouse click or touch screen tap you are always up-to-date with latest MAME and Gaming History information, including game images from Arcade Database.</p>
+          <p>Welcome to FR33 PL4Y, retro arcade games written using modern code!</p>
+		  <p>Inspired by 70s and 80s arcade games in MAME.</p>
+		  <p>Powered by Microsoft .NET SDK and MonoGame.</p>
+		  <p>GPL-3.0 License.</p>
         </div>
+		
+		<p>Installation:</p>
+		<br>
         <ol class="help-steps">
-          <li class="help-step">1. Choose your favorite arcade decade (enter full screen mode with bottom right button!).</li>
-          <li class="help-step">2. Decide which manufacturer spans you want to see. One-year spans (same start and end year) are displayed as a dot on the timeline.</li>
-          <li class="help-step">3. Left panel -> Groups tabpage: make all groups, which contain the starting symbol of the manufacturer(s) in 2., visible. E.g. Atari => group 'a', Sega => group 's', ... .</li>
-          <li class="help-step">4. Left panel -> Tags tabpage: make the desired tags visible (or keep them all visible).</li>
-          <li class="help-step">5. Left panel -> Timeline tabpage: choose sorting and grouping options. Click any era (arcade era), span (arcade manufacturer) or event (arcade cabinet) to visualize it in the timeline or click it directly in the timeline itself.</li>
-          <li class="help-step">6. Right panel: after executing 5., see arcade cabinet information and images, including clickable links.</li>
-          <li class="help-step">7. Optional: define advanced filters in the filter window.</li>
-          <li class="help-step">8. Show all arcade cabinets of a certain manufacturer span using span focus: SHIFT-click a span (<a href="https://www.timelines.studio/wiki/Searching" target="_blank" rel="noopener">link to wiki</a>).</li>
-		  <li class="help-step">9. Play the game in MAME: find the MAME ROM set name between square brackets in the first line of the game description. Example: "Wonder Boy (set 1, 315-5177) [wboy]" has ROM set "wboy"</li>
+          <li class="help-step">Step 1. Windows/macOS/Linux: Install <a href="https://dotnet.microsoft.com/en-us/download" target="_blank" rel="noopener">Microsoft .NET SDK</a></li>
+          <li class="help-step">Step 2. Install <a href="https://monogame.net/" target="_blank" rel="noopener">MonoGame</a> Project Templates (open a Terminal):<br><br><cite>dotnet new install MonoGame.Templates.CSharp</cite></li>
+          <li class="help-step">Step 3. Install the MGCB Editor (open a Terminal):<br><br><cite>dotnet tool install --global dotnet-mgcb-editor<br>mgcb-editor --register</cite></li>
         </ol>
+		
+		<br>
+		
+		<p>Create and Run a New MonoGame Project:</p>
+		<br>
+        <ol class="help-steps">
+          <li class="help-step">Step 1. Create a new directory and scaffold the project:<br><br><cite>dotnet new mgdesktopgl -o MyMonoGameGame</cite></li>
+	      <li class="help-step">Step 2. Navigate into the project folder:<br><br><cite>cd MyMonoGameGame</cite></li>
+		  <li class="help-step">Step 3. Run the game:<br><br><cite>dotnet run</cite></li>
+        </ol>
+		
+		<br>
+		
+		<p>Operating System specific information:</p>
+		<br>
+		 <ol class="help-steps">
+          <li class="help-step"><a href="https://docs.monogame.net/articles/getting_started/index.html" target="_blank" rel="noopener">MonoGame Getting Started</a></li>
+        </ol>
+		
       </div>
     </div>
 
@@ -121,12 +124,6 @@
     <p class="site-footer__credit">Game framework &copy; <a href="https://monogame.net/" target="_blank" rel="noopener">MonoGame</a>, Framework for creating powerful cross-platform games - Microsoft Public License</p>
     <p class="site-footer__spacer" aria-hidden="true"></p>
     <p class="site-footer__copyright">&copy; 2026 FR33 PL4Y Retro Arcade - Modern Code - GPL-3.0 License</p>
-  </footer>
-
-  <script src="script.js"></script>
-</body>
-</html>
- GPL-3.0 License</p>
   </footer>
 
   <script src="script.js"></script>
