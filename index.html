@@ -58,9 +58,10 @@
     </div>
 
     <nav class="tabs" aria-label="Sections">
-      <button class="tab tab--decade" data-tab="70s">70s</button>
-      <button class="tab tab--decade" data-tab="80s">80s</button>
+      <button class="tab tab--decade" data-tab="70s" title="70s Decade">70s</button>
+      <button class="tab tab--decade" data-tab="80s" title="80s Decade">80s</button>
       <button class="tab tab--help" id="help-toggle" title="Help" aria-label="Help">?</button>
+	  <button class="tab tab--systems" id="ARCADETIMELINES" title="ARCADE TIMELINES Website">ARCADE TIMELINES</button>
     </nav>
 
     <!-- The canvas area: the timeline viewer, or the Hall of Fame. -->
@@ -82,7 +83,7 @@
         <div class="help-intro">
           <p>Welcome to FR33 PL4Y, retro arcade games written using modern code!</p>
 		  <p>&check; Inspired by 70s and 80s arcade games in MAME.</p>
-		  <p>&check; Single-file cross-platform C# code, powered by Microsoft .NET SDK and MonoGame.</p>
+		  <p>&check; Powered by Microsoft .NET SDK and MonoGame.</p>
 		  <p>&check; Free Software under GPL-3.0 License (hover image to enlarge).<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="./images/four-freedoms.png" alt="4 software freedoms" class="thumbnail"/></p>
         </div>
 		
@@ -101,8 +102,7 @@
         <ol class="help-steps">
           <li class="help-step">Step 1. Create a new directory and scaffold the project:<br><br><cite>dotnet new mgdesktopgl -o MyMonoGameGame</cite></li>
 	      <li class="help-step">Step 2. Navigate into the project folder:<br><br><cite>cd MyMonoGameGame</cite></li>
-	      <li class="help-step">Step 3. Replace the file Game1.cs by the downloaded source code file of the chosen game.</li>
-		  <li class="help-step">Step 4. Run the game:<br><br><cite>dotnet run</cite></li>
+		  <li class="help-step">Step 3. Run the game:<br><br><cite>dotnet run</cite></li>
         </ol>
 		
 		<br>

@@ -120,6 +120,8 @@ helpOverlay.onclick = event => {
   if (event.target === helpOverlay) closeHelp();
 };
 
+ARCADETIMELINES.onclick = () => ( window.open("https://arcadetimelines.github.io/") );
+
 
 
 let cKeyHeld = false;
