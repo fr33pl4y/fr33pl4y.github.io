@@ -1,0 +1,18 @@
+{
+  "70s": [
+    {
+      "name": "Pong",
+      "screenshot": "screenshots/Pong.png",
+      "sourceCode": "sourcecode/Pong.cs",
+      "year": 1972
+    }
+  ],
+  "80s": [
+    {
+      "name": "Donkey Kong",
+      "screenshot": "screenshots/Donkey Kong.png",
+      "sourceCode": "sourcecode/DonkeyKong.cs",
+      "year": 1981
+    }
+  ]
+}
