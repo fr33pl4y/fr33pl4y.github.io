@@ -1,7 +1,6 @@
 /* script.js — makes the whole site work.
-   It reads data/manifest.json and data/hall_of_fame.json, then handles the tabs,
-   the corner numbers, the credits loop, the theme menu, and swaps the
-   canvas area between the timeline viewer and the Hall of Fame.
+   It reads data/games.json, then handles the 70s/80s tabs (building the
+   game grid), the credits loop, and the help panel.
 
    The file has two parts:
    1. FUNCTIONS — everything the site knows how to do. Nothing in this
@@ -12,20 +11,19 @@
 
 /* ---- DOM ELEMENTS ---------------------------------------------------- */
 const tabs = document.querySelectorAll(".tab[data-tab]");
+const gamesGrid = document.getElementById("games-grid");
 
 const credits = document.querySelectorAll(".credit");
-const hud = document.querySelector(".hud");
 const helpToggle = document.getElementById("help-toggle");
 const helpOverlay = document.getElementById("help-overlay");
 const helpSteps = document.querySelectorAll(".help-step");
 
-const flagCounter = document.getElementById("flag-counter");
-const neonLogo = document.querySelector(".neon-logo");
-
+const screenshotOverlay = document.getElementById("screenshot-overlay");
+const screenshotOverlayImg = document.getElementById("screenshot-overlay-img");
 
 /* ---- STATE ------------------------------------------------------------ */
-let view = "70s";       // which main tab is selected
-let revealTimers = [];
+let games = {};   // filled in by start(), from data/games.json
+                   // shape: { "70s": [ {name, screenshot, sourceCode, year}, ... ], "80s": [...] }
 let helpTimers = [];
 let creditNumber = 0;
 
@@ -33,43 +31,78 @@ let creditNumber = 0;
    1. FUNCTIONS
    ======================================================================== */
 
-/* Load both JSON files, fill in the version line, then open the 70s tab. */
+/* Load the games data, then open the 70s tab. */
 async function start() {
-  //manifest = await (await fetch("data/manifest.json")).json();
-  //hallOfFame = await (await fetch("data/hall_of_fame.json")).json();
-  //document.getElementById(".credit").textContent = "test";
+  games = await (await fetch("data/games.json")).json();
   select("70s");
 }
 
-
-
-/* Main tabs: always show that tab's timeline (and close the Hall of Fame). */
+/* Decade tabs: mark the clicked button active and show that decade's
+   games. */
 function select(name) {
-  view = name;
-  const tab = manifest.tabs[name];
- 
-
   tabs.forEach(button => button.classList.toggle("is-active", button.dataset.tab === name));
+  renderGames(name);
 }
 
+/* Empty out the grid and rebuild it with one tile per game in
+   games[decade]. To add a new game, nothing here needs to change —
+   just add an entry to data/games.json. */
+function renderGames(decade) {
+  gamesGrid.innerHTML = "";
 
-
-/* Redraw the ghost favicon in the given color (the same shape as the
-   CSS ghosts), so the tab icon always matches the current theme. */
-function updateFavicon(color) {
-  const svg =
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 24">` +
-    `<path fill="${color}" d="M0 24V11a11 11 0 0 1 22 0v13z"/>` +
-    `<circle cx="6.5" cy="9.5" r="2.5" fill="#ffffff"/>` +
-    `<circle cx="15.5" cy="9.5" r="2.5" fill="#ffffff"/>` +
-    `</svg>`;
-  document.getElementById("favicon").href = "data:image/svg+xml," + encodeURIComponent(svg);
+  const gameList = games[decade] || [];
+  gameList.forEach(game => {
+    gamesGrid.appendChild(createGameTile(game));
+  });
 }
 
+/* Build one game tile: a square showing the screenshot, the game name,
+   and the year in the corner.
+   - Clicking the tile downloads the game's source code file.
+   - Hovering the tile shows an enlarged screenshot in the center of
+     the screen (see showScreenshot/hideScreenshot below). */
+function createGameTile(game) {
+  // The whole tile is a link. The "download" attribute tells the browser
+  // to save the linked file instead of navigating to it.
+  const tile = document.createElement("a");
+  tile.className = "game-tile";
+  tile.href = game.sourceCode;
+  tile.download = "";
 
+  // The screenshot is used as the tile's background image, so the name
+  // and year can sit on top of it.
+  tile.style.backgroundImage = `url("${game.screenshot}")`;
 
-/* The help panel: intro shows right away, then the 7 steps reveal one
-   at a time, same rhythm as the Hall of Fame rows. */
+  const name = document.createElement("span");
+  name.className = "game-tile__name";
+  name.textContent = game.name;
+  tile.appendChild(name);
+
+  const year = document.createElement("span");
+  year.className = "game-tile__year";
+  year.textContent = game.year;
+  tile.appendChild(year);
+
+  tile.addEventListener("mouseenter", () => showScreenshot(game));
+  tile.addEventListener("mouseleave", hideScreenshot);
+
+  return tile;
+}
+
+/* Show the enlarged screenshot overlay for one game. */
+function showScreenshot(game) {
+  screenshotOverlayImg.src = game.screenshot;
+  screenshotOverlayImg.alt = game.name;
+  screenshotOverlay.hidden = false;
+}
+
+/* Hide the enlarged screenshot overlay. */
+function hideScreenshot() {
+  screenshotOverlay.hidden = true;
+}
+
+/* The help panel: intro shows right away, then the steps reveal one
+   at a time. */
 function openHelp() {
   helpOverlay.hidden = false;
   helpToggle.classList.add("is-active");
@@ -87,7 +120,6 @@ function closeHelp() {
   helpTimers.forEach(clearTimeout);
   helpTimers = [];
 }
-
 
 /* The credits loop: show each .credit item in turn, forever.
    data-hold in the HTML says how long each one stays on screen. */
@@ -110,9 +142,6 @@ tabs.forEach(button => {
   button.onclick = () => select(button.dataset.tab);
 });
 
-
-
-
 helpToggle.onclick = () => (helpOverlay.hidden ? openHelp() : closeHelp());
 
 /* Clicking the dark area around the panel closes it. */
@@ -122,34 +151,5 @@ helpOverlay.onclick = event => {
 
 ARCADETIMELINES.onclick = () => ( window.open("https://arcadetimelines.github.io/") );
 
-
-
-let cKeyHeld = false;
-
-function isCKey(event) {
-  return event.code === "KeyC" || event.key.toLowerCase() === "c";
-}
-
-window.addEventListener("keydown", event => {
-  if (isCKey(event)) cKeyHeld = true;
-});
-
-window.addEventListener("keyup", event => {
-  if (isCKey(event)) cKeyHeld = false;
-});
-
-window.addEventListener("blur", () => { cKeyHeld = false; });
-
-neonLogo.addEventListener("mouseenter", () => neonLogo.focus({ preventScroll: true }));
-
-neonLogo.addEventListener("click", event => {
-  if (event.shiftKey && cKeyHeld) flagCounter.hidden = !flagCounter.hidden;
-});
-
 start();
-
-
-
-
-
 nextCredit();

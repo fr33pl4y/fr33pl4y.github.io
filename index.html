@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <!--
-  Arcade Timelines
-  To change the numbers, versions, links, or themes: edit data/manifest.json.
-  To change the Hall of Fame lists: edit data/hall_of_fame.json.
+  FR33 PL4Y
+  To add or edit the 70s/80s games shown in the tabs: edit data/games.json.
 -->
 <html lang="en">
 <head>
@@ -66,19 +65,18 @@
 	  <button class="tab tab--systems" id="ARCADETIMELINES" title="ARCADE TIMELINES Website">ARCADE TIMELINES</button>
     </nav>
 
-    <!-- The canvas area: the timeline viewer, or the Hall of Fame. -->
-    <main class="timeline-wrap" id="timeline-wrap">
-      <iframe id="timeline-frame" class="timeline-frame" title="Selected arcade timeline" src=""></iframe>
-      <div class="timeline-placeholder" id="timeline-placeholder" hidden>
-        <span class="timeline-placeholder__title">NO TIMELINE</span>
-        <span class="timeline-placeholder__text">This link does not end in <code>.timeline</code>.</span>
+    <!-- The canvas area: a grid of game tiles for whichever decade tab
+         (70s / 80s) is currently selected. script.js fills this in from
+         data/games.json — see that file to add or edit games. -->
+    <main class="games-wrap" id="games-wrap">
+      <div class="games-grid" id="games-grid">
+        <!-- Game tiles are inserted here by script.js. -->
       </div>
-   
     </main>
 
 
     <!-- Help panel. The intro shows right away; the steps reveal one at a
-         time (same animation as the Hall of Fame). -->
+         time. -->
     <div class="help-overlay" id="help-overlay" hidden>
       <div class="help-panel">
 	  
@@ -116,6 +114,13 @@
         </ol>
 		
       </div>
+    </div>
+
+    <!-- Screenshot preview: hidden until a game tile is hovered, then
+         script.js drops that game's screenshot in here, enlarged and
+         centered on screen. Hidden again on mouse-leave. -->
+    <div class="screenshot-overlay" id="screenshot-overlay" hidden>
+      <img class="screenshot-overlay__img" id="screenshot-overlay-img" src="" alt="" />
     </div>
 
   </div>
