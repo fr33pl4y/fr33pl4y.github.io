@@ -6,6 +6,12 @@
 	  "year": 1972,
       "screenshot": "screenshots/Pong.png",
       "sourceCode": "sourcecode/Pong.cs"    
+    },
+	 {
+      "name": "Asteroids",
+	  "year": 1979,
+      "screenshot": "screenshots/Asteroids.png",
+      "sourceCode": "sourcecode/Asteroids.cs"    
     }
   ],
   "80s":
