@@ -21,6 +21,12 @@
 	  "year": 1981,
       "screenshot": "screenshots/DonkeyKong.png",
       "sourceCode": "sourcecode/DonkeyKong.cs"   
+    },
+	{
+      "name": "Frogger",
+	  "year": 1981,
+      "screenshot": "screenshots/Frogger.png",
+      "sourceCode": "sourcecode/Frogger.cs"   
     }
   ]
 }

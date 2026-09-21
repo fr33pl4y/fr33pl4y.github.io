@@ -8,7 +8,9 @@
 // |  ##      ##  ##   ####    ####     ##      ######      ##    ##    |
 // |                                                                    |
 // +====================================================================+
-// https://fr33pl4y.github.io/
+// Website: https://fr33pl4y.github.io/
+// License: GNU General Public License v3 
+// https://www.gnu.org/licenses/gpl-3.0.en.html
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -17,6 +19,16 @@ using System;
 
 namespace Pong
 {
+	public static class Program
+    {
+        [STAThread]
+        static void Main()
+        {
+            using var game = new Game1();
+            game.Run();
+        }
+    }
+	
     public class Game1 : Game
     {
         private GraphicsDeviceManager graphics;
