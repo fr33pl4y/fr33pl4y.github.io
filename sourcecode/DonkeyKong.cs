@@ -18,13 +18,14 @@ using Microsoft.Xna.Framework.Input;
 
 namespace DonkeyKong
 {
-    // ======================================================================
-    //  DONKEY KONG - ARCADE CLONE
-    //  Single-file MonoGame implementation.
-    //  No textures, no sprite sheets, no SpriteFont - everything is drawn
-    //  with a 1x1 white pixel texture (rectangles / rotated rectangles) and
-    //  a hand-rolled 5x7 bitmap font.
-    // ======================================================================
+	public static class Program
+	{
+		public static void Main()
+		{
+			using var game = new Game1();
+			game.Run();
+		}
+	}
 
     public enum GameState { Title, Playing, LevelWon, GameOver }
 
