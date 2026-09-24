@@ -14,6 +14,12 @@
       "sourceCode": "sourcecode/Asteroids.cs"    
     },
 	{
+      "name": "Space Invaders",
+	  "year": 1978,
+      "screenshot": "screenshots/SpaceInvaders.png",
+      "sourceCode": "sourcecode/SpaceInvaders.cs"    
+    },
+	{
       "name": "Arcade Bitmap Font",
 	  "year": 2026,
       "screenshot": "screenshots/ArcadeBitmapFont.png",
