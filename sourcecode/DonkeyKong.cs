@@ -352,6 +352,7 @@ namespace DonkeyKong
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             if (kb.IsKeyDown(Keys.Escape)) Exit();
+            if (Pressed(kb, Keys.F11)) ToggleFullScreen();
 
             _blinkTimer += dt;
 
@@ -396,6 +397,22 @@ namespace DonkeyKong
         }
 
         private bool Pressed(KeyboardState kb, Keys k) => kb.IsKeyDown(k) && !_prevKb.IsKeyDown(k);
+
+        private void ToggleFullScreen()
+        {
+            if (!_graphics.IsFullScreen)
+            {
+                _graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
+                _graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
+            }
+            else
+            {
+                _graphics.PreferredBackBufferWidth = ScreenWidth;
+                _graphics.PreferredBackBufferHeight = ScreenHeight;
+            }
+            _graphics.IsFullScreen = !_graphics.IsFullScreen;
+            _graphics.ApplyChanges();
+        }
 
         private void UpdatePlaying(float dt, KeyboardState kb)
         {
@@ -658,8 +675,15 @@ namespace DonkeyKong
         // ------------------------------------------------------------------
         protected override void Draw(GameTime gameTime)
         {
+            int pw = GraphicsDevice.PresentationParameters.BackBufferWidth;
+            int ph = GraphicsDevice.PresentationParameters.BackBufferHeight;
+            float scale = Math.Min(pw / (float)ScreenWidth, ph / (float)ScreenHeight);
+            float ox = (pw - ScreenWidth * scale) * 0.5f;
+            float oy = (ph - ScreenHeight * scale) * 0.5f;
+            Matrix m = Matrix.CreateScale(scale, scale, 1f) * Matrix.CreateTranslation(ox, oy, 0f);
+
             GraphicsDevice.Clear(Color.Black);
-            _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            _spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: m);
 
             switch (_state)
             {
@@ -810,6 +834,7 @@ namespace DonkeyKong
                 DrawCenteredText("PRESS ENTER TO START", 400, 2, Color.White);
 
             DrawCenteredText("ARROWS MOVE / CLIMB  -  SPACE JUMP", 440, 1, Color.Gray);
+            DrawCenteredText("F11 FULLSCREEN  -  ESC QUIT", 460, 1, Color.Gray);
         }
 
         private void DrawCenteredText(string text, float y, int pixelSize, Color color)

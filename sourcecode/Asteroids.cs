@@ -53,6 +53,9 @@ public class Game1 : Game
 
     private KeyboardState previousKeyboard;
 
+    private int windowedWidth = 1280;
+    private int windowedHeight = 720;
+
     private int ScreenWidth => GraphicsDevice.Viewport.Width;
     private int ScreenHeight => GraphicsDevice.Viewport.Height;
 
@@ -185,6 +188,11 @@ public class Game1 : Game
         if (keyboard.IsKeyDown(Keys.Escape))
         {
             Exit();
+        }
+
+        if (Pressed(keyboard, Keys.F11))
+        {
+            ToggleFullScreen();
         }
 
         // --------------------------------------------------------
@@ -639,6 +647,20 @@ public class Game1 : Game
             },
 
             // ----------------------------------------------------
+            // F
+            // ----------------------------------------------------
+            'F' => new[]
+            {
+                0b11111,
+                0b10000,
+                0b10000,
+                0b11110,
+                0b10000,
+                0b10000,
+                0b10000
+            },
+
+            // ----------------------------------------------------
             // G
             // ----------------------------------------------------
             'G' => new[]
@@ -695,6 +717,20 @@ public class Game1 : Game
             },
 
             // ----------------------------------------------------
+            // N
+            // ----------------------------------------------------
+            'N' => new[]
+            {
+                0b10001,
+                0b11001,
+                0b10101,
+                0b10101,
+                0b10011,
+                0b10001,
+                0b10001
+            },
+
+            // ----------------------------------------------------
             // O
             // ----------------------------------------------------
             'O' => new[]
@@ -737,6 +773,20 @@ public class Game1 : Game
             },
 
             // ----------------------------------------------------
+            // U
+            // ----------------------------------------------------
+            'U' => new[]
+            {
+                0b10001,
+                0b10001,
+                0b10001,
+                0b10001,
+                0b10001,
+                0b10001,
+                0b01110
+            },
+
+            // ----------------------------------------------------
             // V
             // ----------------------------------------------------
             'V' => new[]
@@ -762,6 +812,24 @@ public class Game1 : Game
                 0b10101,
                 0b11011,
                 0b10001
+            },
+
+            // ----------------------------------------------------
+            // 1
+            //
+            // Added so digits can appear inline with letters via
+            // DrawText/DrawGlyph (separate from the seven-segment
+            // DrawNumber/DrawDigit path used for score/wave/lives).
+            // ----------------------------------------------------
+            '1' => new[]
+            {
+                0b00100,
+                0b01100,
+                0b00100,
+                0b00100,
+                0b00100,
+                0b00100,
+                0b01110
             },
 
             // Unknown character
@@ -1069,6 +1137,35 @@ public class Game1 : Game
             new Vector2(
                 ScreenWidth / 2f,
                 ScreenHeight / 2f + 35f));
+
+        DrawFullScreenHint();
+    }
+
+    private void DrawFullScreenHint()
+    {
+        string hint = "F11 FULLSCREEN";
+
+        float scale = 2f;
+
+        float characterWidth = 6f * scale;
+        float spaceWidth = 4f * scale;
+
+        float totalWidth = 0f;
+
+        foreach (char character in hint)
+        {
+            totalWidth += character == ' '
+                ? spaceWidth
+                : characterWidth;
+        }
+
+        DrawText(
+            hint,
+            new Vector2(
+                (ScreenWidth - totalWidth) / 2f,
+                ScreenHeight / 2f + 110f),
+            scale,
+            Color.Gray);
     }
 
     private void DrawRestartPrompt(
@@ -1269,6 +1366,35 @@ public class Game1 : Game
     {
         return keyboard.IsKeyDown(key) &&
                previousKeyboard.IsKeyUp(key);
+    }
+
+    private void ToggleFullScreen()
+    {
+        if (!graphics.IsFullScreen)
+        {
+            // Entering full screen: remember the windowed size, then
+            // fill the display's native resolution.
+            windowedWidth = graphics.PreferredBackBufferWidth;
+            windowedHeight = graphics.PreferredBackBufferHeight;
+
+            graphics.PreferredBackBufferWidth =
+                GraphicsDevice.Adapter.CurrentDisplayMode.Width;
+
+            graphics.PreferredBackBufferHeight =
+                GraphicsDevice.Adapter.CurrentDisplayMode.Height;
+
+            graphics.IsFullScreen = true;
+        }
+        else
+        {
+            // Leaving full screen: restore the previous windowed size.
+            graphics.PreferredBackBufferWidth = windowedWidth;
+            graphics.PreferredBackBufferHeight = windowedHeight;
+
+            graphics.IsFullScreen = false;
+        }
+
+        graphics.ApplyChanges();
     }
 
     // ============================================================

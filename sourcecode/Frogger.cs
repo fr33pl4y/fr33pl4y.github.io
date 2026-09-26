@@ -75,6 +75,7 @@ namespace Frogger
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Texture2D pixel;
+        RasterizerState scissorRs;
 
         // ---------------- Game state ----------------
         GameState state;
@@ -120,6 +121,7 @@ namespace Frogger
             spriteBatch = new SpriteBatch(GraphicsDevice);
             pixel = new Texture2D(GraphicsDevice, 1, 1);
             pixel.SetData(new[] { Color.White });
+            scissorRs = new RasterizerState { ScissorTestEnable = true };
         }
 
         // ================================================================
@@ -239,6 +241,22 @@ namespace Frogger
 
         bool KeyPressed(KeyboardState cur, Keys k) => cur.IsKeyDown(k) && !prevKs.IsKeyDown(k);
 
+        void ToggleFullScreen()
+        {
+            if (!graphics.IsFullScreen)
+            {
+                graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
+                graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
+            }
+            else
+            {
+                graphics.PreferredBackBufferWidth = GridWidth;
+                graphics.PreferredBackBufferHeight = GridHeight + HUD_TOP + HUD_BOTTOM;
+            }
+            graphics.IsFullScreen = !graphics.IsFullScreen;
+            graphics.ApplyChanges();
+        }
+
         // ================================================================
         // UPDATE
         // ================================================================
@@ -248,6 +266,7 @@ namespace Frogger
             var ks = Keyboard.GetState();
 
             if (ks.IsKeyDown(Keys.Escape)) Exit();
+            if (KeyPressed(ks, Keys.F11)) ToggleFullScreen();
 
             UpdateLanes(dt);
 
@@ -408,7 +427,21 @@ namespace Frogger
         {
             GraphicsDevice.Clear(new Color(10, 10, 15));
 
-            spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            int screenW = GridWidth;
+            int screenH = GridHeight + HUD_TOP + HUD_BOTTOM;
+            int pw = GraphicsDevice.PresentationParameters.BackBufferWidth;
+            int ph = GraphicsDevice.PresentationParameters.BackBufferHeight;
+            float scale = Math.Min(pw / (float)screenW, ph / (float)screenH);
+            float ox = (pw - screenW * scale) * 0.5f;
+            float oy = (ph - screenH * scale) * 0.5f;
+            Matrix m = Matrix.CreateScale(scale, scale, 1f) * Matrix.CreateTranslation(ox, oy, 0f);
+
+            GraphicsDevice.ScissorRectangle = Rectangle.Intersect(
+                new Rectangle((int)Math.Round(ox), (int)Math.Round(oy),
+                              (int)Math.Round(screenW * scale), (int)Math.Round(screenH * scale)),
+                new Rectangle(0, 0, pw, ph));
+
+            spriteBatch.Begin(samplerState: SamplerState.PointClamp, rasterizerState: scissorRs, transformMatrix: m);
 
             DrawBackground();
             DrawLaneObjects();
@@ -522,6 +555,8 @@ namespace Frogger
             DrawText(t1, new Vector2(GridWidth / 2f - GetTextWidth(t1, 6) / 2f, centerY - 70), 6, Color.LimeGreen);
             string t2 = "PRESS ENTER TO START";
             DrawText(t2, new Vector2(GridWidth / 2f - GetTextWidth(t2, 2) / 2f, centerY + 40), 2, Color.White);
+            string t3 = "F11 FULLSCREEN   ESC QUIT";
+            DrawText(t3, new Vector2(GridWidth / 2f - GetTextWidth(t3, 1) / 2f, centerY + 80), 1, Color.Gray);
         }
 
         void DrawGameOverOverlay()

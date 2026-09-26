@@ -74,6 +74,16 @@ namespace Pong
 
         private Random random = new Random();
 
+        // Used to detect a fresh key press (as opposed to a
+        // key being held down) for toggles like fullscreen.
+        private KeyboardState previousKeyboard;
+
+        // Scales the fixed 960x540 game view up to whatever the
+        // actual back buffer size is (e.g. the full desktop
+        // resolution in full screen mode) so the graphics fill
+        // the screen instead of staying pinned to the corner.
+        private Matrix scaleMatrix = Matrix.Identity;
+
         // ---------------------------------------------------------
         // 5x7 BITMAP FONT
         //
@@ -219,6 +229,16 @@ namespace Pong
 
             graphics.PreferredBackBufferWidth = ScreenWidth;
             graphics.PreferredBackBufferHeight = ScreenHeight;
+
+            // Use borderless fullscreen so the game fills the
+            // monitor at its native desktop resolution instead
+            // of trying to switch the display mode.
+            graphics.HardwareModeSwitch = false;
+
+            Window.AllowUserResizing = true;
+
+            Window.ClientSizeChanged +=
+                (sender, args) => UpdateScaleMatrix();
         }
 
         // ---------------------------------------------------------
@@ -272,6 +292,8 @@ namespace Pong
             );
 
             pixel.SetData(new[] { Color.White });
+
+            UpdateScaleMatrix();
         }
 
         // ---------------------------------------------------------
@@ -286,6 +308,14 @@ namespace Pong
             if (keyboard.IsKeyDown(Keys.Escape))
                 Exit();
 
+            // F11 toggles full screen mode. Only trigger on the
+            // frame the key is first pressed, not while held.
+            if (keyboard.IsKeyDown(Keys.F11) &&
+                !previousKeyboard.IsKeyDown(Keys.F11))
+            {
+                ToggleFullScreen();
+            }
+
             float deltaTime =
                 (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -295,7 +325,76 @@ namespace Pong
 
             UpdateBall(deltaTime);
 
+            previousKeyboard = keyboard;
+
             base.Update(gameTime);
+        }
+
+        // ---------------------------------------------------------
+        // FULL SCREEN TOGGLE
+        // ---------------------------------------------------------
+
+        private void ToggleFullScreen()
+        {
+            if (graphics.IsFullScreen)
+            {
+                // Switch back to the normal windowed size.
+                graphics.PreferredBackBufferWidth = ScreenWidth;
+                graphics.PreferredBackBufferHeight = ScreenHeight;
+            }
+            else
+            {
+                // Fill the whole monitor by matching the
+                // back buffer to the desktop resolution.
+                DisplayMode displayMode =
+                    GraphicsDevice.Adapter.CurrentDisplayMode;
+
+                graphics.PreferredBackBufferWidth =
+                    displayMode.Width;
+
+                graphics.PreferredBackBufferHeight =
+                    displayMode.Height;
+            }
+
+            graphics.IsFullScreen = !graphics.IsFullScreen;
+
+            graphics.ApplyChanges();
+
+            UpdateScaleMatrix();
+        }
+
+        // ---------------------------------------------------------
+        // SCALE MATRIX
+        //
+        // The game is always drawn on a fixed 960x540 virtual
+        // canvas. This matrix scales that canvas up to fill the
+        // actual back buffer (screen or window), keeping the
+        // aspect ratio and centering it with letterbox bars if
+        // needed, so the graphics stretch to fill full screen
+        // mode instead of staying in the top-left corner.
+        // ---------------------------------------------------------
+
+        private void UpdateScaleMatrix()
+        {
+            float scaleX =
+                GraphicsDevice.Viewport.Width / (float)ScreenWidth;
+
+            float scaleY =
+                GraphicsDevice.Viewport.Height / (float)ScreenHeight;
+
+            float scale = Math.Min(scaleX, scaleY);
+
+            float offsetX =
+                (GraphicsDevice.Viewport.Width -
+                    ScreenWidth * scale) / 2f;
+
+            float offsetY =
+                (GraphicsDevice.Viewport.Height -
+                    ScreenHeight * scale) / 2f;
+
+            scaleMatrix =
+                Matrix.CreateScale(scale, scale, 1f) *
+                Matrix.CreateTranslation(offsetX, offsetY, 0f);
         }
 
         // ---------------------------------------------------------
@@ -553,7 +652,7 @@ namespace Pong
         {
             GraphicsDevice.Clear(Color.Black);
 
-            spriteBatch.Begin();
+            spriteBatch.Begin(transformMatrix: scaleMatrix);
 
             // Left player paddle.
             DrawRect(
