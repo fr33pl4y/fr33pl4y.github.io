@@ -33,6 +33,12 @@
 	  "year": 1981,
       "screenshot": "screenshots/Frogger.png",
       "sourceCode": "sourcecode/Frogger.cs"   
+    },
+	{
+      "name": "Arkanoid",
+	  "year": 1986,
+      "screenshot": "screenshots/Arkanoid.png",
+      "sourceCode": "sourcecode/Arkanoid.cs"   
     }
   ]
 }
