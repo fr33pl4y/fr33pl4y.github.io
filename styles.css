@@ -64,6 +64,75 @@ body {
     inset 0 0 0 8px var(--border-color);
 }
 
+/* ---- CORNER GAME COUNTER ----------------------------------------
+   Sits above the logo, hard against the top-right inside edge of the
+   neon frame. script.js fills in the number for the open decade. */
+.hud {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.hud-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+
+.hud-stat__value {
+  color: var(--link-color);
+}
+
+.hud-stat__label {
+  color: var(--ui-muted);
+}
+
+/* The little Pac-Man ghost in front of the number. It is drawn with
+   CSS rather than an image: a rounded-off box for the body, and the
+   ::before / ::after dots for the two eyes. */
+.ghost {
+  flex-shrink: 0;
+  position: relative;
+  width: 22px;
+  height: 24px;
+  background: var(--link-color);
+  border-radius: 11px 11px 0 0;
+}
+
+.ghost::before,
+.ghost::after {
+  content: "";
+  position: absolute;
+  top: 7px;
+  width: 5px;
+  height: 5px;
+  background: #ffffff;
+  border-radius: 50%;
+}
+
+.ghost::before { left: 4px; }
+.ghost::after  { right: 4px; }
+
+/* The smaller ghost used by the corner counter. */
+.ghost--mini {
+  width: 14px;
+  height: 15px;
+  border-radius: 7px 7px 0 0;
+  background: var(--ui-muted);
+}
+
+.ghost--mini::before,
+.ghost--mini::after {
+  top: 4px;
+  width: 3px;
+  height: 3px;
+}
+
+.ghost--mini::before { left: 3px; }
+.ghost--mini::after  { right: 3px; }
+
 /* ---- NEON LOGO ---------------------------------------------------- */
 .site-header {
   text-align: center;
@@ -323,6 +392,57 @@ body {
   box-shadow: 0 0 30px color-mix(in srgb, var(--border-color) 50%, transparent);
 }
 
+/* ---- BOTTOM BAR + SORT SWITCH -------------------------------------
+   The bar along the bottom inside edge of the neon frame. The sort
+   switch is pushed over to the right-hand end of it. */
+.bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.sort-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sort-switch__label {
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+/* The two halves of the switch. script.js puts .is-active on whichever
+   one is in use. */
+.sort-option {
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 9px;
+  line-height: 1;
+  text-transform: uppercase;
+  background: transparent;
+  border: 2px solid var(--ui-muted);
+  border-radius: 6px;
+  color: var(--ui-muted);
+  padding: 6px 10px;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.sort-option:hover {
+  background: color-mix(in srgb, var(--ui-muted) 14%, transparent);
+}
+
+.sort-option.is-active {
+  background: var(--link-color);
+  border-color: var(--link-color);
+  color: var(--app-bg);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--link-color) 60%, transparent);
+}
+
 /* ---- SITE FOOTER (legal / credits) -------------------------------------
    --footer-warning-color is set by script.js: red by default, black
    whenever red wouldn't be legible against the current theme's --app-bg. */
@@ -468,6 +588,16 @@ body {
 
   .credits__rotator {
     max-width: 55vw;
+  }
+
+  .hud-stat,
+  .sort-switch__label {
+    font-size: 9px;
+  }
+
+  .sort-option {
+    font-size: 8px;
+    padding: 5px 8px;
   }
 }
 

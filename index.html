@@ -21,7 +21,17 @@
 
 <body>
   <div class="arcade-frame">
-  
+
+    <!-- The game counter in the top-right corner. script.js counts the
+         games of whichever decade tab is open and fills in the number
+         here — see showGameCount. -->
+    <div class="hud">
+      <div class="hud-stat">
+        <span class="ghost ghost--mini" aria-hidden="true"></span>
+        <span class="hud-stat__value" id="game-count">00</span>
+        <span class="hud-stat__label">Games</span>
+      </div>
+    </div>
 
     <header class="site-header">
       <h1 class="neon-logo" tabindex="-1">
@@ -74,6 +84,19 @@
         <!-- Game tiles are inserted here by script.js. -->
       </div>
     </main>
+
+    <!-- The bar along the bottom of the frame. The sort switch sits on
+         the right of it, where ARCADE TIMELINES keeps its theme chooser. -->
+    <footer class="bottom-bar">
+      <!-- Sort switch: puts the tiles of the decade on show in name
+           order or in year order, smallest first. script.js does the
+           sorting — see setSort and sortGames. -->
+      <div class="sort-switch">
+        <span class="sort-switch__label">Sort:</span>
+        <button class="sort-option is-active" data-sort="name" type="button">Name</button>
+        <button class="sort-option" data-sort="year" type="button">Year</button>
+      </div>
+    </footer>
 
 
     <!-- Help panel. The intro shows right away; the steps reveal one at a

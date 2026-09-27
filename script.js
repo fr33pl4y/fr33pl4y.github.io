@@ -1,6 +1,7 @@
 /* script.js — makes the whole site work.
    It reads data/games.json, then handles the 70s/80s tabs (building the
-   game grid), the credits loop, and the help panel.
+   game grid and counting the games), the sort switch, the credits loop,
+   and the help panel.
 
    The file has two parts:
    1. FUNCTIONS — everything the site knows how to do. Nothing in this
@@ -12,6 +13,8 @@
 /* ---- DOM ELEMENTS ---------------------------------------------------- */
 const tabs = document.querySelectorAll(".tab[data-tab]");
 const gamesGrid = document.getElementById("games-grid");
+const gameCount = document.getElementById("game-count");
+const sortOptions = document.querySelectorAll(".sort-option");
 
 const credits = document.querySelectorAll(".credit");
 const helpToggle = document.getElementById("help-toggle");
@@ -24,6 +27,10 @@ const screenshotOverlayImg = document.getElementById("screenshot-overlay-img");
 /* ---- STATE ------------------------------------------------------------ */
 let games = {};   // filled in by start(), from data/games.json
                    // shape: { "70s": [ {name, screenshot, sourceCode, year}, ... ], "80s": [...] }
+                   // The order the keys are written in doesn't matter: every
+                   // game is read by name (game.name, game.year, ...).
+let openDecade = "70s"; // which decade tab is on show right now
+let sortBy = "name";    // what the sort switch is set to: "name" or "year"
 let helpTimers = [];
 let creditNumber = 0;
 
@@ -40,6 +47,7 @@ async function start() {
 /* Decade tabs: mark the clicked button active and show that decade's
    games. */
 function select(name) {
+  openDecade = name;
   tabs.forEach(button => button.classList.toggle("is-active", button.dataset.tab === name));
   renderGames(name);
 }
@@ -51,9 +59,49 @@ function renderGames(decade) {
   gamesGrid.innerHTML = "";
 
   const gameList = games[decade] || [];
-  gameList.forEach(game => {
+
+  // The corner number is counted from the list itself, so it is always
+  // right — there is nothing to keep up to date in games.json.
+  showGameCount(gameList.length);
+
+  sortGames(gameList).forEach(game => {
     gamesGrid.appendChild(createGameTile(game));
   });
+}
+
+/* Put the number of games in the top-right corner. Always two digits,
+   so a single game reads as "01". */
+function showGameCount(total) {
+  gameCount.textContent = String(total).padStart(2, "0");
+}
+
+/* Hand back the decade's games in the order the sort switch is set to,
+   smallest first: A to Z by name, or oldest first by year.
+   slice() takes a copy first, so the list loaded from games.json is
+   left exactly as it was. */
+function sortGames(gameList) {
+  return gameList.slice().sort((gameA, gameB) => {
+    if (sortBy === "year") {
+      // Number() in case a year is written with quotes round it in the
+      // JSON. Two games from the same year fall back to the name, so
+      // the tiles never swap places for no reason.
+      return Number(gameA.year) - Number(gameB.year) || compareNames(gameA, gameB);
+    }
+    return compareNames(gameA, gameB);
+  });
+}
+
+/* Compare two game names A to Z, ignoring capital letters. */
+function compareNames(gameA, gameB) {
+  return gameA.name.localeCompare(gameB.name, undefined, { sensitivity: "base" });
+}
+
+/* The sort switch: remember the choice, light up the button that was
+   clicked, and rebuild the grid of the decade on show. */
+function setSort(choice) {
+  sortBy = choice;
+  sortOptions.forEach(button => button.classList.toggle("is-active", button.dataset.sort === choice));
+  renderGames(openDecade);
 }
 
 /* Build one game tile: a square showing the screenshot, the game name,
@@ -140,6 +188,10 @@ function nextCredit() {
 
 tabs.forEach(button => {
   button.onclick = () => select(button.dataset.tab);
+});
+
+sortOptions.forEach(button => {
+  button.onclick = () => setSort(button.dataset.sort);
 });
 
 helpToggle.onclick = () => (helpOverlay.hidden ? openHelp() : closeHelp());
