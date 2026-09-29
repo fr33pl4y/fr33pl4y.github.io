@@ -39,6 +39,12 @@
 	  "year": 1986,
       "screenshot": "screenshots/Arkanoid.png",
       "sourceCode": "sourcecode/Arkanoid.cs"   
+    },
+	{
+      "name": "Bubble Bobble",
+	  "year": 1986,
+      "screenshot": "screenshots/BubbleBobble.png",
+      "sourceCode": "sourcecode/BubbleBobble.cs"   
     }
   ]
 }
