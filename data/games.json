@@ -41,7 +41,7 @@
       "sourceCode": "sourcecode/Arkanoid.cs"   
     },
 	{
-      "name": "Bubble Bobble",
+      "name": "Bubble Bobble (NEW!)",
 	  "year": 1986,
       "screenshot": "screenshots/BubbleBobble.png",
       "sourceCode": "sourcecode/BubbleBobble.cs"   
