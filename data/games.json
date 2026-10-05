@@ -41,10 +41,16 @@
       "sourceCode": "sourcecode/Arkanoid.cs"   
     },
 	{
-      "name": "Bubble Bobble (NEW!)",
+      "name": "Bubble Bobble",
 	  "year": 1986,
       "screenshot": "screenshots/BubbleBobble.png",
       "sourceCode": "sourcecode/BubbleBobble.cs"   
+    },
+	{
+      "name": "Tetris -NEW-",
+	  "year": 1988,
+      "screenshot": "screenshots/Tetris.png",
+      "sourceCode": "sourcecode/Tetris.cs"   
     }
   ]
 }
