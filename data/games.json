@@ -47,10 +47,16 @@
       "sourceCode": "sourcecode/BubbleBobble.cs"   
     },
 	{
-      "name": "Tetris -NEW-",
+      "name": "Tetris",
 	  "year": 1988,
       "screenshot": "screenshots/Tetris.png",
       "sourceCode": "sourcecode/Tetris.cs"   
+    },
+	{
+      "name": "Wizard Of Wor -NEW-",
+	  "year": 1980,
+      "screenshot": "screenshots/WizardOfWor.png",
+      "sourceCode": "sourcecode/WizardOfWor.cs"   
     }
   ]
 }
