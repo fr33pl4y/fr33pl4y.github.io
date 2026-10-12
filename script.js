@@ -1,7 +1,7 @@
 /* script.js — makes the whole site work.
-   It reads data/manifest.json and data/hall_of_fame.json, then handles the tabs,
-   the corner numbers, the credits loop, the theme menu, and swaps the
-   canvas area between the timeline viewer and the Hall of Fame.
+   It reads data/games.json, then handles the 70s/80s tabs (building the
+   game grid and counting the games), the sort switch, the credits loop,
+   and the help panel.
 
    The file has two parts:
    1. FUNCTIONS — everything the site knows how to do. Nothing in this
@@ -12,297 +12,146 @@
 
 /* ---- DOM ELEMENTS ---------------------------------------------------- */
 const tabs = document.querySelectorAll(".tab[data-tab]");
-const hofButtons = document.querySelectorAll(".tab[data-hof]");
-const hofToggle = document.getElementById("hof-toggle");
-const timelineWrap = document.getElementById("timeline-wrap");
-const frame = document.getElementById("timeline-frame");
-const placeholder = document.getElementById("timeline-placeholder");
-const maximizeBtn = document.getElementById("maximize-btn");
-const iconMaximize = document.getElementById("icon-maximize");
-const iconMinimize = document.getElementById("icon-minimize");
-const hofWrap = document.getElementById("hof-wrap");
-const hofList = document.getElementById("hof-list");
-const themeMenu = document.getElementById("theme-menu");
-const themeToggle = document.getElementById("theme-toggle");
+const gamesGrid = document.getElementById("games-grid");
+const gameCount = document.getElementById("game-count");
+const sortOptions = document.querySelectorAll(".sort-option");
+
 const credits = document.querySelectorAll(".credit");
-const hud = document.querySelector(".hud");
 const helpToggle = document.getElementById("help-toggle");
 const helpOverlay = document.getElementById("help-overlay");
 const helpSteps = document.querySelectorAll(".help-step");
-const linksToggle = document.getElementById("links-toggle");
-const linksOverlay = document.getElementById("links-overlay");
-const linksItems = document.querySelectorAll(".links-item");
-const flagCounter = document.getElementById("flag-counter");
-const neonLogo = document.querySelector(".neon-logo");
-const mameVersion = document.getElementById("mame-version");
+
+const screenshotOverlay = document.getElementById("screenshot-overlay");
+const screenshotOverlayImg = document.getElementById("screenshot-overlay-img");
 
 /* ---- STATE ------------------------------------------------------------ */
-let manifest, hallOfFame;
-let view = "70s";       // which main tab is selected
-let hofView = "70s";    // which list is selected inside the Hall of Fame
-let hofMode = false;    // is the Hall of Fame open?
-let revealTimers = [];
+let games = {};   // filled in by start(), from data/games.json
+                   // shape: { "70s": [ {name, screenshot, sourceCode, year}, ... ], "80s": [...] }
+                   // The order the keys are written in doesn't matter: every
+                   // game is read by name (game.name, game.year, ...).
+let openDecade = "70s"; // which decade tab is on show right now
+let sortBy = "name";    // what the sort switch is set to: "name" or "year"
 let helpTimers = [];
-let linksTimers = [];
 let creditNumber = 0;
 
 /* ========================================================================
    1. FUNCTIONS
    ======================================================================== */
 
-/* Load both JSON files, fill in the version line, then open the 70s tab. */
+/* Load the games data, then open the 70s tab. */
 async function start() {
-  manifest = await (await fetch("data/manifest.json")).json();
-  hallOfFame = await (await fetch("data/hall_of_fame.json")).json();
-  document.getElementById("credit-version").textContent = manifest.versionLine;
-  showDecorations();
-  buildThemeMenu();
-  startMameTicker();
+  games = await (await fetch("data/games.json")).json();
   select("70s");
 }
 
-/* Holiday decorations. Set "halloween" or "christmas" to true in
-   data/manifest.json to show them; styles.css only shows the
-   decorations whose class is on the <body>. */
-function showDecorations() {
-  document.body.classList.toggle("halloween", manifest.halloween === true);
-  document.body.classList.toggle("christmas", manifest.christmas === true);
-  if (manifest.christmas === true) makeSnow();
-}
-
-/* Drop snowflakes at random spots, sizes and speeds, so the snow
-   doesn't fall in a visible pattern. */
-function makeSnow() {
-  const snow = document.getElementById("decor-snow");
-  for (let i = 0; i < 18; i++) {
-    const flake = document.createElement("img");
-    flake.src = "decorations/snowflake.svg";
-    flake.alt = "";
-    flake.style.left = Math.random() * 100 + "%";
-    flake.style.width = 7 + Math.round(Math.random() * 3) * 2 + "px";
-    flake.style.animationDuration = 7 + Math.random() * 6 + "s";
-    flake.style.animationDelay = -Math.random() * 13 + "s";
-    snow.appendChild(flake);
-  }
-}
-
-/* Fill in the two corner numbers for a tab: Manufacturers/Games for a
-   decade, Arcade Systems/Games for the systems tab. Pass null to clear
-   both corners (used by the Hall of Fame, which never shows stats). */
-function showStats(tab) {
-  const leftLabel = document.getElementById("stat-left-label");
-  const leftValue = document.getElementById("stat-left-value");
-  const rightLabel = document.getElementById("stat-right-label");
-  const rightValue = document.getElementById("stat-right-value");
-
-  // Hides the little ghosts too whenever the stats are cleared.
-  hud.classList.toggle("hud--empty", !tab);
-
-  if (!tab) {
-    leftLabel.textContent = "";
-    leftValue.textContent = "";
-    rightLabel.textContent = "";
-    rightValue.textContent = "";
-    return;
-  }
-
-  const isSystems = tab.systems !== undefined;
-  if (isSystems) {
-    leftLabel.textContent = "Arcade Systems";
-    leftValue.textContent = String(tab.systems).padStart(3, "0");
-  } else {
-    leftLabel.textContent = "Manufacturers";
-    leftValue.textContent = String(tab.manufacturers).padStart(3, "0");
-  }
-
-  rightLabel.textContent = "Games";
-  rightValue.textContent = String(tab.games).padStart(4, "0");
-}
-
-/* Turn a theme file's address into its marketplace name:
-   ".../themes/mocha/mocha.json" becomes "mocha". */
-function themeId(themeFile) {
-  return themeFile.split("/").pop().replace(".json", "");
-}
-
-/* Point the frame at a timeline, shown in the same theme as the site.
-   The frame can only show links that end in ".timeline". */
-function setFrame(url, themeFile) {
-  const isTimeline = url.endsWith(".timeline");
-
-  if (isTimeline) {
-    frame.src = url + "?theme=" + themeId(themeFile);
-  } else {
-    frame.src = "about:blank";
-  }
-
-  frame.hidden = !isTimeline;
-  maximizeBtn.hidden = !isTimeline;
-  placeholder.hidden = isTimeline;
-}
-
-/* Main tabs: always show that tab's timeline (and close the Hall of Fame). */
+/* Decade tabs: mark the clicked button active and show that decade's
+   games. */
 function select(name) {
-  view = name;
-  hofMode = false;
-  const tab = manifest.tabs[name];
-  showStats(tab);
-  applyTheme(tab.theme);
-
-  timelineWrap.hidden = false;
-  hofWrap.hidden = true;
-  setFrame(tab.url, tab.theme);
-
+  openDecade = name;
   tabs.forEach(button => button.classList.toggle("is-active", button.dataset.tab === name));
-  hofToggle.classList.remove("is-active");
+  renderGames(name);
 }
 
-/* Buttons inside the Hall of Fame: show a decade's top 10, or the
-   manufacturers list. The corner stats are always empty in the Hall
-   of Fame, regardless of which decade or list is selected. */
-function selectHof(name) {
-  hofView = name;
-  hofMode = true;
-  const isMakers = name === "manufacturers";
-  const tab = manifest.tabs[isMakers ? "Arcade Systems" : name];
-  showStats(null);
-  applyTheme(tab.theme);
+/* Empty out the grid and rebuild it with one tile per game in
+   games[decade]. To add a new game, nothing here needs to change —
+   just add an entry to data/games.json. */
+function renderGames(decade) {
+  gamesGrid.innerHTML = "";
 
-  timelineWrap.hidden = true;
-  hofWrap.hidden = false;
-  fillHallOfFame(name);
+  const gameList = games[decade] || [];
 
-  tabs.forEach(button => button.classList.remove("is-active"));
-  hofToggle.classList.add("is-active");
-  hofButtons.forEach(button => button.classList.toggle("is-active", button.dataset.hof === name));
-}
+  // The corner number is counted from the list itself, so it is always
+  // right — there is nothing to keep up to date in games.json.
+  showGameCount(gameList.length);
 
-/* The Hall of Fame button opens it, or closes it back to the timeline. */
-function toggleHallOfFame() {
-  if (hofMode) {
-    select(view);
-  } else {
-    selectHof(hofView);
-  }
-}
-
-/* Build the Hall of Fame rows, then reveal them one at a time,
-   high-score style. */
-function fillHallOfFame(name) {
-  const isMakers = name === "manufacturers";
-  document.getElementById("col-a").textContent = isMakers ? "Manufacturer" : "Game";
-  document.getElementById("col-b").textContent = isMakers ? "" : "Manufacturer";
-  document.getElementById("col-c").textContent = isMakers ? "Top 10s" : "Year";
-
-  revealTimers.forEach(clearTimeout);
-  revealTimers = [];
-  hofList.innerHTML = "";
-  const rows = isMakers ? manufacturerRows() : hallOfFame[name].top10;
-  rows.forEach((entry, i) => {
-    const row = document.createElement("li");
-    row.className = "hof-row";
-    row.innerHTML =
-      `<span class="hof-rank">${i + 1}.</span>` +
-      `<span class="hof-game">${entry.game}</span>` +
-      `<span class="hof-maker">${entry.manufacturer}</span>` +
-      `<span class="hof-year">${entry.year}</span>`;
-    hofList.appendChild(row);
-    revealTimers.push(setTimeout(() => row.classList.add("is-revealed"), 300 + i * 220));
+  sortGames(gameList).forEach(game => {
+    gamesGrid.appendChild(createGameTile(game));
   });
 }
 
-/* Count how often each manufacturer appears in the four decade lists,
-   then keep the 10 with the biggest counts. */
-function manufacturerRows() {
-  const counts = {};
-  for (const decade of ["70s", "80s", "90s", "2000s"])
-    for (const entry of hallOfFame[decade].top10)
-      counts[entry.manufacturer] = (counts[entry.manufacturer] || 0) + 1;
-
-  return Object.keys(counts)
-    .sort((a, b) => counts[b] - counts[a])
-    .slice(0, 10)
-    .map(name => ({ game: name, manufacturer: "", year: "x " + counts[name] }));
+/* Put the number of games in the top-right corner. Always two digits,
+   so a single game reads as "01". */
+function showGameCount(total) {
+  gameCount.textContent = String(total).padStart(2, "0");
 }
 
-/* The footer's copyright-warning line is red by default, but red is
-   unreadable on some theme backgrounds — so it falls back to black
-   whenever the current --app-bg doesn't give it enough contrast.
-   (This math is the trickiest part of the file — safe to skip over.) */
-const WARNING_RED = "#ff3b3b";
-
-function relativeLuminance(hex) {
-  const [r, g, b] = hex.replace("#", "").match(/.{2}/g).map(part => {
-    const channel = parseInt(part, 16) / 255;
-    return channel <= 0.03928 ? channel / 12.92 : Math.pow((channel + 0.055) / 1.055, 2.4);
-  });
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-}
-
-function contrastRatio(hexA, hexB) {
-  const a = relativeLuminance(hexA) + 0.05;
-  const b = relativeLuminance(hexB) + 0.05;
-  return a > b ? a / b : b / a;
-}
-
-function updateWarningColor(appBg) {
-  const legible = contrastRatio(WARNING_RED, appBg) >= 4.5;
-  document.documentElement.style.setProperty("--footer-warning-color", legible ? WARNING_RED : "#000000");
-}
-
-/* Redraw the ghost favicon in the given color (the same shape as the
-   CSS ghosts), so the tab icon always matches the current theme. */
-function updateFavicon(color) {
-  const svg =
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 24">` +
-    `<path fill="${color}" d="M0 24V11a11 11 0 0 1 22 0v13z"/>` +
-    `<circle cx="6.5" cy="9.5" r="2.5" fill="#ffffff"/>` +
-    `<circle cx="15.5" cy="9.5" r="2.5" fill="#ffffff"/>` +
-    `</svg>`;
-  document.getElementById("favicon").href = "data:image/svg+xml," + encodeURIComponent(svg);
-}
-
-/* Paint the site's colors from a theme file. Each color in the file
-   becomes a CSS variable, so "app-bg" becomes --app-bg in styles.css. */
-async function applyTheme(url) {
-  try {
-    const theme = await (await fetch(url)).json();
-    for (const key in theme.colors) {
-      document.documentElement.style.setProperty("--" + key, theme.colors[key]);
+/* Hand back the decade's games in the order the sort switch is set to,
+   smallest first: A to Z by name, or oldest first by year.
+   slice() takes a copy first, so the list loaded from games.json is
+   left exactly as it was. */
+function sortGames(gameList) {
+  return gameList.slice().sort((gameA, gameB) => {
+    if (sortBy === "year") {
+      // Number() in case a year is written with quotes round it in the
+      // JSON. Two games from the same year fall back to the name, so
+      // the tiles never swap places for no reason.
+      return Number(gameA.year) - Number(gameB.year) || compareNames(gameA, gameB);
     }
-    document.getElementById("theme-value").textContent = theme.name.toUpperCase();
-    updateWarningColor(theme.colors["app-bg"] || "#000000");
-    updateFavicon(theme.colors["ui-muted"] || "#1ea0ff");
-  } catch (error) {
-    console.warn("Could not load theme:", url, error);
-  }
+    return compareNames(gameA, gameB);
+  });
 }
 
-/* The theme menu: one button per theme listed in data/manifest.json. */
-function buildThemeMenu() {
-  for (const [name, url] of Object.entries(manifest.themes)) {
-    const option = document.createElement("button");
-    option.className = "theme-option";
-    option.textContent = name;
-    option.onclick = () => {
-      applyTheme(url);
-      themeMenu.hidden = true;
-      // Repaint the timeline in the new theme too.
-      if (!timelineWrap.hidden) setFrame(manifest.tabs[view].url, url);
-    };
-    themeMenu.appendChild(option);
-  }
+/* Compare two game names A to Z, ignoring capital letters. */
+function compareNames(gameA, gameB) {
+  return gameA.name.localeCompare(gameB.name, undefined, { sensitivity: "base" });
 }
 
-/* Open or close the theme menu. */
-function toggleThemeMenu() {
-  themeMenu.hidden = !themeMenu.hidden;
+/* The sort switch: remember the choice, light up the button that was
+   clicked, and rebuild the grid of the decade on show. */
+function setSort(choice) {
+  sortBy = choice;
+  sortOptions.forEach(button => button.classList.toggle("is-active", button.dataset.sort === choice));
+  renderGames(openDecade);
 }
 
-/* The help panel: intro shows right away, then the 7 steps reveal one
-   at a time, same rhythm as the Hall of Fame rows. */
+/* Build one game tile: a square showing the screenshot, the game name,
+   and the year in the corner.
+   - Clicking the tile downloads the game's source code file.
+   - Hovering the tile shows an enlarged screenshot in the center of
+     the screen (see showScreenshot/hideScreenshot below). */
+function createGameTile(game) {
+  // The whole tile is a link. The "download" attribute tells the browser
+  // to save the linked file instead of navigating to it.
+  const tile = document.createElement("a");
+  tile.className = "game-tile";
+  tile.href = game.sourceCode;
+  tile.download = "";
+
+  // The screenshot is used as the tile's background image, so the name
+  // and year can sit on top of it.
+  tile.style.backgroundImage = `url("${game.screenshot}")`;
+
+  const name = document.createElement("span");
+  name.className = "game-tile__name";
+  name.textContent = game.name;
+  tile.appendChild(name);
+
+  const year = document.createElement("span");
+  year.className = "game-tile__year";
+  year.textContent = game.year;
+  tile.appendChild(year);
+
+  tile.addEventListener("mouseenter", () => showScreenshot(game));
+  tile.addEventListener("mouseleave", hideScreenshot);
+
+  return tile;
+}
+
+/* Show the enlarged screenshot overlay for one game. */
+function showScreenshot(game) {
+  screenshotOverlayImg.src = game.screenshot;
+  screenshotOverlayImg.alt = game.name;
+  screenshotOverlay.hidden = false;
+}
+
+/* Hide the enlarged screenshot overlay. */
+function hideScreenshot() {
+  screenshotOverlay.hidden = true;
+}
+
+/* The help panel: intro shows right away, then the steps reveal one
+   at a time. */
 function openHelp() {
-  closeLinks();
   helpOverlay.hidden = false;
   helpToggle.classList.add("is-active");
   helpTimers.forEach(clearTimeout);
@@ -318,46 +167,6 @@ function closeHelp() {
   helpToggle.classList.remove("is-active");
   helpTimers.forEach(clearTimeout);
   helpTimers = [];
-}
-
-/* The links panel: same window as the help panel, and the entries
-   reveal one at a time the same way. Only one panel is open at a time. */
-function openLinks() {
-  closeHelp();
-  linksOverlay.hidden = false;
-  linksToggle.classList.add("is-active");
-  linksTimers.forEach(clearTimeout);
-  linksTimers = [];
-  linksItems.forEach(item => item.classList.remove("is-revealed"));
-  linksItems.forEach((item, i) => {
-    linksTimers.push(setTimeout(() => item.classList.add("is-revealed"), 300 + i * 220));
-  });
-}
-
-function closeLinks() {
-  linksOverlay.hidden = true;
-  linksToggle.classList.remove("is-active");
-  linksTimers.forEach(clearTimeout);
-  linksTimers = [];
-}
-
-/* The MAME version in the bottom-left corner: typed out one character
-   at a time ("M", "MA", "MAM", ...), held for 10 seconds, then again.
-   The number comes from the same manifest line as the credits loop. */
-function startMameTicker() {
-  const match = manifest.versionLine.match(/MAME\s+[\d.]+/);
-  const text = match ? match[0] : "MAME";
-  let shown = 0;
-
-  (function type() {
-    shown++;
-    mameVersion.textContent = text.slice(0, shown);
-    if (shown < text.length) {
-      setTimeout(type, 180);
-    } else {
-      setTimeout(() => { shown = 0; type(); }, 10000);
-    }
-  })();
 }
 
 /* The credits loop: show each .credit item in turn, forever.
@@ -381,12 +190,9 @@ tabs.forEach(button => {
   button.onclick = () => select(button.dataset.tab);
 });
 
-hofButtons.forEach(button => {
-  button.onclick = () => selectHof(button.dataset.hof);
+sortOptions.forEach(button => {
+  button.onclick = () => setSort(button.dataset.sort);
 });
-
-hofToggle.onclick = toggleHallOfFame;
-themeToggle.onclick = toggleThemeMenu;
 
 helpToggle.onclick = () => (helpOverlay.hidden ? openHelp() : closeHelp());
 
@@ -395,57 +201,7 @@ helpOverlay.onclick = event => {
   if (event.target === helpOverlay) closeHelp();
 };
 
-linksToggle.onclick = () => (linksOverlay.hidden ? openLinks() : closeLinks());
+ARCADETIMELINES.onclick = () => ( window.open("https://arcadetimelines.github.io/") );
 
-linksOverlay.onclick = event => {
-  if (event.target === linksOverlay) closeLinks();
-};
-
-let cKeyHeld = false;
-
-function isCKey(event) {
-  return event.code === "KeyC" || event.key.toLowerCase() === "c";
-}
-
-window.addEventListener("keydown", event => {
-  if (isCKey(event)) cKeyHeld = true;
-});
-
-window.addEventListener("keyup", event => {
-  if (isCKey(event)) cKeyHeld = false;
-});
-
-window.addEventListener("blur", () => { cKeyHeld = false; });
-
-neonLogo.addEventListener("mouseenter", () => neonLogo.focus({ preventScroll: true }));
-
-neonLogo.addEventListener("click", event => {
-  if (event.shiftKey && cKeyHeld) flagCounter.hidden = !flagCounter.hidden;
-});
-
-/* Fullscreen the whole timeline area (not just the iframe), so the
-   maximize button stays on top of it and can flip into an exit button. */
-maximizeBtn.onclick = () => {
-  if (document.fullscreenElement) {
-    document.exitFullscreen();
-  } else {
-    timelineWrap.requestFullscreen();
-  }
-};
-
-document.addEventListener("fullscreenchange", () => {
-  const isFullscreen = document.fullscreenElement === timelineWrap;
-  iconMaximize.hidden = isFullscreen;
-  iconMinimize.hidden = !isFullscreen;
-  maximizeBtn.title = isFullscreen ? "Exit fullscreen" : "Open timeline in fullscreen";
-  maximizeBtn.setAttribute("aria-label", maximizeBtn.title);
-});
-
-start().catch(() => alert(
-  "Could not load data/manifest.json / data/hall_of_fame.json.\n" +
-  "Run 'python -m http.server' in this folder, then open http://localhost:8000"
-));
-
-FR33PL4Y.onclick = () => ( window.open("https://fr33pl4y.github.io/") );
-
+start();
 nextCredit();

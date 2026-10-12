@@ -1,4 +1,4 @@
-﻿// +====================================================================+
+// +====================================================================+
 // |                                                                    |
 // |  ######  #####   #####   #####     #####   ##      ##  ##  ##  ##  |
 // |  ##      ##  ##      ##      ##    ##  ##  ##      ##  ##  ##  ##  |
@@ -147,8 +147,8 @@ public class Game1 : Game
 
         Vector2 velocity =
             new Vector2(
-                MathF.Cos(angle),
-                MathF.Sin(angle)) *
+                (float)Math.Cos(angle),
+                (float)Math.Sin(angle)) *
             speed;
 
         asteroids.Add(
@@ -1174,7 +1174,7 @@ public class Game1 : Game
         float pulse =
             0.5f +
             0.5f *
-            MathF.Sin(
+            (float)Math.Sin(
                 (float)
                     DateTime.Now.TimeOfDay.TotalSeconds *
                 5f);
@@ -1300,7 +1300,7 @@ public class Game1 : Game
             return;
 
         float angle =
-            MathF.Atan2(
+            (float)Math.Atan2(
                 difference.Y,
                 difference.X);
 
@@ -1430,7 +1430,7 @@ public class Game1 : Game
             Position = startPosition;
 
             Rotation =
-                -MathF.PI / 2f;
+                -(float)Math.PI / 2f;
 
             Alive = true;
         }
@@ -1442,7 +1442,7 @@ public class Game1 : Game
             Velocity = Vector2.Zero;
 
             Rotation =
-                -MathF.PI / 2f;
+                -(float)Math.PI / 2f;
 
             Alive = true;
 
@@ -1504,7 +1504,7 @@ public class Game1 : Game
 
             // Friction
             Velocity *=
-                MathF.Pow(
+                (float)Math.Pow(
                     Friction,
                     dt * 60f);
 
@@ -1553,8 +1553,8 @@ public class Game1 : Game
         public Vector2 Forward()
         {
             return new Vector2(
-                MathF.Cos(Rotation),
-                MathF.Sin(Rotation));
+                (float)Math.Cos(Rotation),
+                (float)Math.Sin(Rotation));
         }
 
         public void Draw(
@@ -1650,7 +1650,7 @@ public class Game1 : Game
                 return;
 
             float angle =
-                MathF.Atan2(
+                (float)Math.Atan2(
                     difference.Y,
                     difference.X);
 
@@ -1850,8 +1850,8 @@ public class Game1 : Game
 
                 vertices[i] =
                     new Vector2(
-                        MathF.Cos(angle),
-                        MathF.Sin(angle)) *
+                        (float)Math.Cos(angle),
+                        (float)Math.Sin(angle)) *
                     Radius *
                     variation;
             }
@@ -1908,7 +1908,7 @@ public class Game1 : Game
                     : 190f;
 
             float angle =
-                MathF.Atan2(
+                (float)Math.Atan2(
                     Velocity.Y,
                     Velocity.X);
 
@@ -1916,14 +1916,14 @@ public class Game1 : Game
 
             Vector2 velocity1 =
                 new Vector2(
-                    MathF.Cos(angle - offset),
-                    MathF.Sin(angle - offset)) *
+                    (float)Math.Cos(angle - offset),
+                    (float)Math.Sin(angle - offset)) *
                 speed;
 
             Vector2 velocity2 =
                 new Vector2(
-                    MathF.Cos(angle + offset),
-                    MathF.Sin(angle + offset)) *
+                    (float)Math.Cos(angle + offset),
+                    (float)Math.Sin(angle + offset)) *
                 speed;
 
             result.Add(
@@ -1977,10 +1977,10 @@ public class Game1 : Game
             Vector2 point)
         {
             float cos =
-                MathF.Cos(rotation);
+                (float)Math.Cos(rotation);
 
             float sin =
-                MathF.Sin(rotation);
+                (float)Math.Sin(rotation);
 
             return Position +
                    new Vector2(
@@ -2008,7 +2008,7 @@ public class Game1 : Game
                 return;
 
             float angle =
-                MathF.Atan2(
+                (float)Math.Atan2(
                     difference.Y,
                     difference.X);
 

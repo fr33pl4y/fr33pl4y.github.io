@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <!--
-  Arcade Timelines
-  To change the numbers, versions, links, or themes: edit data/manifest.json.
-  To change the Hall of Fame lists: edit data/hall_of_fame.json.
-  To turn the holiday decorations on or off: set "halloween" or
-  "christmas" to true or false in data/manifest.json.
+  FR33 PL4Y
+  To add or edit the 70s/80s games shown in the tabs: edit data/games.json.
 -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Arcade Timelines</title>
+  <title>FR33 PL4Y Retro Arcade - Modern Code</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -24,233 +21,132 @@
 
 <body>
   <div class="arcade-frame">
-    <!-- Christmas: lights along the top and snow falling over the header.
-         script.js adds the snowflakes. Images are in decorations/. -->
-    <div class="decor decor--christmas decor-top" aria-hidden="true">
-      <div class="decor-lights"></div>
-      <div class="decor-snow" id="decor-snow"></div>
-    </div>
 
-    <!-- The numbers in the top corners. Labels and values are both
-         filled in by script.js from data/manifest.json (see showStats). -->
+    <!-- The game counter in the top-right corner. script.js counts the
+         games of whichever decade tab is open and fills in the number
+         here — see showGameCount. -->
     <div class="hud">
-      <div class="hud-stat hud-stat--left">
-        <span class="hud-stat__labelrow">
-          <span class="ghost ghost--mini" aria-hidden="true"></span>
-          <span class="hud-stat__label" id="stat-left-label"></span>
-        </span>
-        <span class="hud-stat__value" id="stat-left-value"></span>
-      </div>
-      <div class="hud-stat hud-stat--right">
-        <span class="hud-stat__labelrow">
-          <span class="ghost ghost--mini" aria-hidden="true"></span>
-          <span class="hud-stat__label" id="stat-right-label"></span>
-        </span>
-        <span class="hud-stat__value" id="stat-right-value"></span>
+      <div class="hud-stat">
+        <span class="ghost ghost--mini" aria-hidden="true"></span>
+        <span class="hud-stat__value" id="game-count">00</span>
+        <span class="hud-stat__label">Games</span>
       </div>
     </div>
 
     <header class="site-header">
       <h1 class="neon-logo" tabindex="-1">
-        <span class="neon-logo__arcade">ARCADE</span>
-        <span class="neon-logo__timelines">TIMELINES</span>
+        <span class="neon-logo__arcade">FR33 PL4Y</span>
+        <span class="neon-logo__timelines">RETRO ARCADE - MODERN CODE</span>
       </h1>
-
-      <!-- Holiday decorations on both sides of the logo. Only shown when
-           "halloween" or "christmas" is true in data/manifest.json. -->
-      <div class="decor decor--halloween" aria-hidden="true">
-        <img class="decor__side decor__side--left" src="decorations/pumpkin.svg" alt="" />
-        <img class="decor__side decor__side--right" src="decorations/pumpkin.svg" alt="" />
-        <img class="decor__bat decor__bat--left" src="decorations/bat.svg" alt="" />
-        <img class="decor__bat decor__bat--right" src="decorations/bat.svg" alt="" />
-      </div>
-      <div class="decor decor--christmas" aria-hidden="true">
-        <img class="decor__side decor__side--left" src="decorations/tree.svg" alt="" />
-        <img class="decor__side decor__side--right" src="decorations/tree.svg" alt="" />
-      </div>
     </header>
 
     <!-- Credits loop: items show one at a time, top to bottom, then repeat.
          data-hold = how long each item stays on screen (milliseconds). -->
     <div class="credits">
       <div class="credits__rotator">
-        <span class="credit credit--insert" data-hold="3400">INSERT COIN</span>
-        <span class="credit credit--version" id="credit-version" data-hold="3400">Updated to MAME &mdash;</span>
+        <span class="credit credit--insert" data-hold="3600">INSERT COIN</span>
+        <span class="credit credit--version" id="credit-version" data-hold="3600">From the creators of ARCADE TIMELINES, we proudly present FR33 PL4Y !!!</span>
+		<span class="credit credit--version" id="credit-version" data-hold="3600">Open Source 70s and 80s arcade games, all set to free play!</span>
+		<span class="credit credit--version" id="credit-version" data-hold="3600">Press F11 key to play in full screen mode.</span>
+		<span class="credit credit--version" id="credit-version" data-hold="3600">Adjust the source code and add your own graphics and sounds to create your own versions!</span>
         <a class="credit credit-logo" data-hold="2600" href="https://www.mamedev.org" target="_blank" rel="noopener">
           <img src="images/mame_logo.png" alt="MAME" />
         </a>
-        <a class="credit credit-logo" data-hold="2600" href="https://adb.arcadeitalia.net" target="_blank" rel="noopener">
-          <img src="images/arcade_database_logo.png" alt="Arcade Database" />
+		
+		<a class="credit credit-logo" data-hold="2600" href="https://dotnet.microsoft.com/en-us/download" target="_blank" rel="noopener">
+          <img src="images/dotnet_logo.png" alt="dotnet" />
         </a>
-		<a class="credit credit-logo" data-hold="2600" href="https://www.progettosnaps.net" target="_blank" rel="noopener">
-          <img src="images/progetto-snaps_logo.png" alt="Progetto-Snaps" />
+		
+		<a class="credit credit-logo" data-hold="2600" href="https://monogame.net/" target="_blank" rel="noopener">
+          <img src="images/monogame_logo.png" alt="MonoGame" />
         </a>
-        <a class="credit credit-logo" data-hold="2600" href="https://www.arcade-history.com" target="_blank" rel="noopener">
-          <img src="images/gaming_history_logo.png" alt="Gaming History" />
+		
+		<a class="credit credit-logo" data-hold="2600" href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank" rel="noopener">
+          <img src="images/gplv3_logo.png" alt="GPL" />
         </a>
-        <a class="credit credit-logo" data-hold="2600" href="https://timelines.studio" target="_blank" rel="noopener">
-          <img src="images/timelines_logo.png" alt="Timelines" />
+        
         </a>
       </div>
     </div>
 
     <nav class="tabs" aria-label="Sections">
-      <button class="tab tab--decade" data-tab="70s">70s</button>
-      <button class="tab tab--decade" data-tab="80s">80s</button>
-      <button class="tab tab--decade" data-tab="90s">90s</button>
-      <button class="tab tab--decade" data-tab="2000s">2000s</button>
-      <button class="tab tab--systems" data-tab="Arcade Systems">Arcade Systems</button>
-      <button class="tab tab--hof" id="hof-toggle">Hall of Fame</button>
+      <button class="tab tab--decade" data-tab="70s" title="70s Decade">70s</button>
+      <button class="tab tab--decade" data-tab="80s" title="80s Decade">80s</button>
       <button class="tab tab--help" id="help-toggle" title="Help" aria-label="Help">?</button>
-      <button class="tab tab--links" id="links-toggle" title="Links" aria-label="Links">Links</button>
-	  <button class="tab tab--systems" id="FR33PL4Y" title="FR33 PL4Y Website">FR33 PL4Y</button>
+	  <button class="tab tab--systems" id="ARCADETIMELINES" title="ARCADE TIMELINES Website">ARCADE TIMELINES</button>
     </nav>
 
-    <!-- The canvas area: the timeline viewer, or the Hall of Fame. -->
-    <main class="timeline-wrap" id="timeline-wrap">
-      <iframe id="timeline-frame" class="timeline-frame" title="Selected arcade timeline" src=""></iframe>
-      <div class="timeline-placeholder" id="timeline-placeholder" hidden>
-        <span class="timeline-placeholder__title">NO TIMELINE</span>
-        <span class="timeline-placeholder__text">This link does not end in <code>.timeline</code>.</span>
+    <!-- The canvas area: a grid of game tiles for whichever decade tab
+         (70s / 80s) is currently selected. script.js fills this in from
+         data/games.json — see that file to add or edit games. -->
+    <main class="games-wrap" id="games-wrap">
+      <div class="games-grid" id="games-grid">
+        <!-- Game tiles are inserted here by script.js. -->
       </div>
-      <button class="maximize-btn" id="maximize-btn" title="Open timeline in fullscreen" aria-label="Open timeline in fullscreen">
-        <!-- Lucide "maximize" icon (inlined; uses currentColor). Shown when not fullscreen. -->
-        <svg id="icon-maximize" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M8 3H5a2 2 0 0 0-2 2v3" />
-          <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
-          <path d="M3 16v3a2 2 0 0 0 2 2h3" />
-          <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
-        </svg>
-        <!-- Lucide "minimize" icon (inlined; uses currentColor). Shown while fullscreen. -->
-        <svg id="icon-minimize" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden>
-          <path d="M8 3v3a2 2 0 0 1-2 2H3" />
-          <path d="M21 8h-3a2 2 0 0 1-2-2V3" />
-          <path d="M3 16h3a2 2 0 0 1 2 2v3" />
-          <path d="M16 21v-3a2 2 0 0 1 2-2h3" />
-        </svg>
-      </button>
     </main>
 
-    <main class="hof-wrap" id="hof-wrap" hidden>
-      <nav class="tabs tabs--hof" aria-label="Hall of Fame lists">
-        <button class="tab tab--decade" data-hof="70s">70s</button>
-        <button class="tab tab--decade" data-hof="80s">80s</button>
-        <button class="tab tab--decade" data-hof="90s">90s</button>
-        <button class="tab tab--decade" data-hof="2000s">2000s</button>
-        <button class="tab tab--systems" data-hof="manufacturers">Manufacturers</button>
-      </nav>
-      <div class="hof-head">
-        <span></span>
-        <span id="col-a">Game</span>
-        <span id="col-b">Manufacturer</span>
-        <span class="hof-year" id="col-c">Year</span>
-      </div>
-      <ol class="hof-list" id="hof-list"></ol>
-    </main>
-
-    <!-- Help panel. The intro shows right away; the steps reveal one at a
-         time (same animation as the Hall of Fame). -->
-    <div class="help-overlay" id="help-overlay" hidden>
-      <div class="help-panel">
-        <div class="help-intro">
-          <p>Welcome to Arcade Timelines, the exciting journey to your favorite arcade decade.</p>
-          <p>Relive your childhood, find those long-forgotten games and enter the golden age of arcade games again!</p>
-          <p>With one mouse click or touch screen tap you are always up-to-date with latest MAME and Gaming History information, including game images from Arcade Database.</p>
-        </div>
-        <ol class="help-steps">
-          <li class="help-step">1. Choose your favorite arcade decade (enter full screen mode with bottom right button!).</li>
-          <li class="help-step">2. Decide which manufacturer spans you want to see. One-year spans (same start and end year) are displayed as a dot on the timeline.</li>
-          <li class="help-step">3. Left panel -> Groups tabpage: make all groups, which contain the starting symbol of the manufacturer(s) in 2., visible. E.g. Atari => group 'a', Sega => group 's', ... .</li>
-          <li class="help-step">4. Left panel -> Tags tabpage: make the desired tags visible (or keep them all visible).</li>
-          <li class="help-step">5. Left panel -> Timeline tabpage: choose sorting and grouping options. Click any era (arcade era), span (arcade manufacturer) or event (arcade cabinet) to visualize it in the timeline or click it directly in the timeline itself.</li>
-          <li class="help-step">6. Right panel: after executing 5., see arcade cabinet information and images, including clickable links.</li>
-          <li class="help-step">7. Optional: define advanced filters in the filter window.</li>
-          <li class="help-step">8. Show all arcade cabinets of a certain manufacturer span using span focus: SHIFT-click a span (<a href="https://www.timelines.studio/wiki/Searching" target="_blank" rel="noopener">link to wiki</a>).</li>
-		  <li class="help-step">9. Play the game in MAME: find the MAME ROM set name between square brackets in the first line of the game description. Example: "Wonder Boy (set 1, 315-5177) [wboy]" has ROM set "wboy"</li>
-        </ol>
-      </div>
-    </div>
-
-    <!-- Links panel. Same window as the help panel; the entries reveal one
-         at a time, same animation as the help steps. -->
-    <div class="links-overlay" id="links-overlay" hidden>
-      <div class="help-panel">
-        <ul class="links-list">
-          <li class="links-group">
-            <span class="links-group__title">Book:</span>
-            <span class="links-item"><a href="https://www.theycreateworlds.com/book" target="_blank" rel="noopener">They Create Worlds</a></span>
-          </li>
-          <li class="links-group">
-            <span class="links-group__title">Blog:</span>
-            <span class="links-item"><a href="https://allincolorforaquarter.blogspot.com/" target="_blank" rel="noopener">All In Color For a Quarter</a></span>
-            <span class="links-item"><a href="https://arcadeblogger.com/" target="_blank" rel="noopener">The Arcade Blogger</a></span>
-			<span class="links-item"><a href="https://arcadeheroes.com/" target="_blank" rel="noopener">Arcade Heroes</a></span>
-          </li>
-		  <li class="links-group">
-            <span class="links-group__title">World's Biggest Gaming History Database:</span>
-            <span class="links-item"><a href="https://www.arcade-history.com/" target="_blank" rel="noopener">Gaming History</a></span>
-          </li>
-		  <li class="links-group">
-            <span class="links-group__title">World's Biggest Arcade:</span>
-            <span class="links-item"><a href="https://www.gallopingghostarcade.com" target="_blank" rel="noopener">Galloping Ghost Arcade</a></span>
-          </li>
-		  <li class="links-group">
-            <span class="links-group__title">Arcade Systems:</span>
-            <span class="links-item"><a href="https://www.system16.com" target="_blank" rel="noopener">System 16 - The Arcade Museum</a></span>
-			<span class="links-item"><a href="https://segaretro.org/" target="_blank" rel="noopener">Sega Retro</a></span>
-          </li>
-		  <li class="links-group">
-            <span class="links-group__title">Emulator:</span>
-            <span class="links-item"><a href="https://www.mamedev.org/" target="_blank" rel="noopener">MAME</a></span>
-          </li>
-          <li class="links-group">
-            <span class="links-group__title">Code your own arcade games:</span>
-            <span class="links-item"><a href="https://cynthiamcmahon.ca/blog/classic-games-monogame-tutorials/" target="_blank" rel="noopener">Arcade MonoGame Tutorials</a></span>
-            <span class="links-item"><a href="https://pacmancode.com/" target="_blank" rel="noopener">Pacman Tutorial</a></span>
-            <span class="links-item"><a href="https://arcade.makecode.com/" target="_blank" rel="noopener">MakeCode Arcade</a></span>
-            <span class="links-item"><a href="https://shop.elecfreaks.com/products/elecfreaks-retro-makecode-arcade-for-education" target="_blank" rel="noopener">ELECFREAKS Retro MakeCode Arcade For Education</a></span>
-            <span class="links-item"><a href="https://retrogamecoders.com/" target="_blank" rel="noopener">Retro Game Coders</a></span>
-            <span class="links-item"><a href="https://tic80.com/" target="_blank" rel="noopener">TIC-80 tiny computer</a></span>
-            <span class="links-item"><a href="https://microstudio.dev/" target="_blank" rel="noopener">microStudio</a></span>
-            <span class="links-item"><a href="https://8bitworkshop.com/" target="_blank" rel="noopener">8bitworkshop</a></span>
-            <span class="links-item"><a href="https://www.c64va.tech/" target="_blank" rel="noopener">C64 Visual Assembler</a></span>
-            <span class="links-item"><a href="https://love2d.org/" target="_blank" rel="noopener">LÖVE</a></span>
-          </li>
-        </ul>
-      </div>
-    </div>
-
+    <!-- The bar along the bottom of the frame. The sort switch sits on
+         the right of it, where ARCADE TIMELINES keeps its theme chooser. -->
     <footer class="bottom-bar">
-      <!-- MAME logo, then the version typed out character by character by
-           script.js. The number comes from versionLine in data/manifest.json. -->
-      <div class="mame-line">
-        <img class="mame-line__logo" src="images/mame_logo_small.svg" alt="" aria-hidden="true" />
-        <div class="mame-version" id="mame-version" aria-hidden="true"></div>
-      </div>
-
-      <a class="flag-counter" id="flag-counter" hidden href="https://info.flagcounter.com/FtHc" target="_blank" rel="noopener">
-        <img src="https://s05.flagcounter.com/count2/FtHc/bg_FFFFFF/txt_000000/border_CCCCCC/columns_4/maxflags_16/viewers_0/labels_1/pageviews_1/flags_0/percent_0/" alt="Flag Counter" />
-      </a>
-
-      <!-- Hidden for now. -->
-      <div class="visitors" hidden>
-        <span class="visitors__label">Visitors</span>
-        <span class="digit">0</span>
-        <span class="digit">2</span>
-        <span class="digit">4</span>
-        <span class="digit">6</span>
-        <span class="digit">0</span>
-        <span class="digit">1</span>
-        <span class="ghost" aria-hidden="true"></span>
-      </div>
-
-      <div class="theme-picker">
-        <button class="theme-readout" id="theme-toggle" type="button">
-          Theme:<span class="theme-readout__value" id="theme-value">-</span>
-        </button>
-        <div class="theme-menu" id="theme-menu" hidden></div>
+      <!-- Sort switch: puts the tiles of the decade on show in name
+           order or in year order, smallest first. script.js does the
+           sorting — see setSort and sortGames. -->
+      <div class="sort-switch">
+        <span class="sort-switch__label">Sort:</span>
+        <button class="sort-option is-active" data-sort="name" type="button">Name</button>
+        <button class="sort-option" data-sort="year" type="button">Year</button>
       </div>
     </footer>
+
+
+    <!-- Help panel. The intro shows right away; the steps reveal one at a
+         time. -->
+    <div class="help-overlay" id="help-overlay" hidden>
+      <div class="help-panel">
+	  
+        <div class="help-intro">
+          <p>Welcome to FR33 PL4Y, retro arcade games written using modern code!</p>
+		  <p>&check; Inspired by 70s and 80s arcade games in MAME.</p>
+		  <p>&check; Single-file cross-platform C# code, powered by Microsoft .NET SDK and MonoGame.</p>
+		  <p>&check; Free Software under GPL-3.0 License (hover image to enlarge).<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="./images/four-freedoms.png" alt="4 software freedoms" class="thumbnail"/></p>
+        </div>
+		
+		<p>Installation:</p>
+		<br>
+        <ol class="help-steps">
+          <li class="help-step">Step 1. Windows/macOS/Linux: Install <a href="https://dotnet.microsoft.com/en-us/download" target="_blank" rel="noopener">Microsoft .NET SDK</a></li>
+          <li class="help-step">Step 2. Install <a href="https://monogame.net/" target="_blank" rel="noopener">MonoGame</a> Project Templates (open a Terminal):<br><br><cite>dotnet new install MonoGame.Templates.CSharp</cite></li>
+        </ol>
+		
+		<br>
+		
+		<p>Create and Run a New MonoGame Project:</p>
+		<br>
+        <ol class="help-steps">
+          <li class="help-step">Step 1. Create a new directory and scaffold the project (open a Terminal):<br><br><cite>dotnet new mgdesktopgl -o MyMonoGameGame</cite></li>
+	      <li class="help-step">Step 2. Navigate into the project folder:<br><br><cite>cd MyMonoGameGame</cite></li>
+		  <li class="help-step">Step 3. Delete the files Game1.cs and Program.cs and add the downloaded source code of the chosen game.</li>
+		  <li class="help-step">Step 4. Build and run the game:<br><br><cite>dotnet run</cite></li>
+        </ol>
+		
+		<br>
+		
+		<p>Operating System specific information:</p>
+		<br>
+		 <ol class="help-steps">
+          <li class="help-step"><a href="https://docs.monogame.net/articles/getting_started/index.html" target="_blank" rel="noopener">MonoGame Getting Started</a></li>
+        </ol>
+		
+      </div>
+    </div>
+
+    <!-- Screenshot preview: hidden until a game tile is hovered, then
+         script.js drops that game's screenshot in here, enlarged and
+         centered on screen. Hidden again on mouse-leave. -->
+    <div class="screenshot-overlay" id="screenshot-overlay" hidden>
+      <img class="screenshot-overlay__img" id="screenshot-overlay-img" src="" alt="" />
+    </div>
+
   </div>
 
   <!-- Footer, shown under every view, outside the neon
@@ -258,13 +154,12 @@
        black by script.js, depending on whether red is legible against
        the current theme's background. -->
   <footer class="site-footer">
-    <p class="site-footer__warning">No copyrighted game ROMs or game materials are hosted on this website!!!</p>
+    <p class="site-footer__warning">No copyrighted game assets/graphics are used and no game reverse engineering has been done!!!<br>All game implementations are for educational use, based on my personal version of the gameplay and graphics, GPL-3.0 Licensed.</p>
     <p class="site-footer__credit">Game lists &copy; <a href="https://www.mamedev.org/" target="_blank" rel="noopener">MAME</a> - GPL-2.0 License</p>
-    <p class="site-footer__credit">Game descriptions &copy; <a href="https://www.arcade-history.com/index.php?page=download" target="_blank" rel="noopener">Gaming History</a>, Alexis Bousiges, Cannes, France</p>
-    <p class="site-footer__credit">Game images &copy; <a href="https://adb.arcadeitalia.net/" target="_blank" rel="noopener">Arcade Database</a>, Michele Fochi, Italy / <a href="https://www.progettosnaps.net" target="_blank" rel="noopener">Progetto-Snaps</a>, Antonio Paradossi, Italy</p>
-    <p class="site-footer__credit">Software &copy; <a href="https://timelines.studio/" target="_blank" rel="noopener">Timelines</a>, Sree Gajula, California, USA - GPL-3.0 License</p>
+    <p class="site-footer__credit">Software platform &copy; <a href="https://dotnet.microsoft.com/en-us/download" target="_blank" rel="noopener">Microsoft .NET</a>, Free. Cross-platform. Open source. - MIT License</p>
+    <p class="site-footer__credit">Game framework &copy; <a href="https://monogame.net/" target="_blank" rel="noopener">MonoGame</a>, Framework for creating powerful cross-platform games - Microsoft Public License</p>
     <p class="site-footer__spacer" aria-hidden="true"></p>
-    <p class="site-footer__copyright">&copy; 2026 Arcade Timelines</p>
+    <p class="site-footer__credit">&copy; 2026 FR33 PL4Y Retro Arcade - Modern Code - <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank" rel="noopener">GPL-3.0 License</a></p>
   </footer>
 
   <script src="script.js"></script>
