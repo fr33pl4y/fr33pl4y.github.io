@@ -18,6 +18,12 @@
 	  "year": 1978,
       "screenshot": "screenshots/SpaceInvaders.png",
       "sourceCode": "sourcecode/SpaceInvaders.cs"    
+    },
+	{
+      "name": "Avalanche -NEW-",
+	  "year": 1978,
+      "screenshot": "screenshots/Avalanche.png",
+      "sourceCode": "sourcecode/Avalanche.cs"    
     }
   ],
   "80s":
