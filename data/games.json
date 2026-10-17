@@ -20,10 +20,16 @@
       "sourceCode": "sourcecode/SpaceInvaders.cs"    
     },
 	{
-      "name": "Avalanche -NEW-",
+      "name": "Avalanche",
 	  "year": 1978,
       "screenshot": "screenshots/Avalanche.png",
       "sourceCode": "sourcecode/Avalanche.cs"    
+    },
+	{
+      "name": "Boot Hill -NEW-",
+	  "year": 1977,
+      "screenshot": "screenshots/BootHill.png",
+      "sourceCode": "sourcecode/BootHill.cs"    
     }
   ],
   "80s":
