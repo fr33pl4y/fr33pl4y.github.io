@@ -65,10 +65,16 @@
       "sourceCode": "sourcecode/Tetris.cs"   
     },
 	{
-      "name": "Wizard Of Wor -NEW-",
+      "name": "Wizard Of Wor",
 	  "year": 1980,
       "screenshot": "screenshots/WizardOfWor.png",
       "sourceCode": "sourcecode/WizardOfWor.cs"   
+    },
+	{
+      "name": "Anteater -NEW-",
+	  "year": 1982,
+      "screenshot": "screenshots/Anteater.png",
+      "sourceCode": "sourcecode/Anteater.cs"   
     }
   ]
 }
